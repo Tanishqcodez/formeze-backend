@@ -309,7 +309,7 @@ const generateHtml = (token, reqType) => {
       headerSubtitle: "Confirm your email to unlock full access",
       bodyText:
         "Welcome to Formeze! We're glad you're here. To complete your registration and keep your account secure, please verify your email address by clicking the button below.",
-      ctaUrl: `http://localhost:5173/verify/${token}/`,
+      ctaUrl: `https://formeze.netlify.app/verify/${token}/`,
       ctaLabel: "Verify my email address",
       noticeText: `This link expires in <strong>24 hours</strong>. If you didn't create a Formeze account, you can safely ignore this email — no action is required.`,
       closingText: `Once verified, you'll have full access to all features. If you need any help, reach out to us anytime at <a href="mailto:support@formeze.com" style="color:#2e8b4a;text-decoration:none;">support@formeze.com</a>.`,
@@ -351,7 +351,7 @@ const generateHtml = (token, reqType) => {
                         <table role="presentation" width="36" height="36" cellspacing="0" cellpadding="0" border="0" bgcolor="#2ACA65" style="border-radius:10px;">
                           <tr>
                             <td align="center" valign="middle" style="font-size:16px;font-weight:bold;color:#04140a;">
-                              <img src="http://localhost:5173/public/logo.png?t=1778682876841" alt="Formeze Logo" width="20" height="20" style="display:block;">
+                              <img src="https://formeze.netlify.app/public/logo.png?t=1778682876841" alt="Formeze Logo" width="20" height="20" style="display:block;">
                             </td>
                           </tr>
                         </table>
@@ -503,7 +503,7 @@ const generateHtml = (token, reqType) => {
     headerSubtitle: "Follow the steps below to set a new password",
     bodyText:
       "We received a request to reset the password linked to your Formeze account. Click the button below and you'll be taken to a secure page where you can create a new password.",
-    ctaUrl: `http://localhost:5173/reset/${token}/`,
+    ctaUrl: `https://formeze.netlify.app/reset/${token}/`,
     ctaLabel: "Reset my password",
     noticeText: `This reset link is valid for a <strong>limited time only</strong>. If you didn't request a password reset, you can safely ignore this email — your password will remain unchanged.`,
     closingText: `If you continue to experience issues or have questions, our support team is always here to help at <a href="mailto:support@formeze.com" style="color:#2e8b4a;text-decoration:none;">support@formeze.com</a>. Thank you for using Formeze.`,
