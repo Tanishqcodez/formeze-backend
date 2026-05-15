@@ -8,18 +8,9 @@ const jwt = require("jsonwebtoken");
 const fetchuser = require("../middleware/fetchUser");
 const JWT_SECRET = process.env.JWT_SECRET;
 const randomString = require("randomstring");
-const nodemailer = require("nodemailer");
 const generateHtml = require("../generateHtml");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+
 
 router.post("/signup", async (req, res) => {
   try {
@@ -34,12 +25,6 @@ router.post("/signup", async (req, res) => {
     const secPass = await bcrypt.hash(req.body.password, salt);
 
     let token = randomString.generate();
-    const mailOption = {
-      from: process.env.EMAIL_USER,
-      to: req.body.email,
-      subject: "Verify Your Formeze Account",
-      html: generateHtml(token, "verify"),
-    };
     const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
 
     user = await User.create({
@@ -52,16 +37,13 @@ router.post("/signup", async (req, res) => {
       created_at: Date.now(),
     });
 
-    transporter.sendMail(mailOption, (err, info) => {
-      console.log(info)
-      if (err) {
-        console.log("Error sending email:", err);
-        return res.status(500).json({
-          success: false,
-          error: err.message,
-        });
-      }
+    const mail = await resend.emails.send({
+      from: "Formeze <onboarding@resend.dev>",
+      to: req.body.email,
+      subject: "Verify Your Formeze Account",
+      html: generateHtml(token, "verify"),
     });
+
     const data = {
       id: user.id,
     };
@@ -116,13 +98,13 @@ router.post(
 router.get("/fetch", fetchuser, async (req, res) => {
   try {
     let user = await User.findById(req.id).select(
-  "-password -resetPasswordToken -verificationToken -verificationTokenExpiry"
-);
+      "-password -resetPasswordToken -verificationToken -verificationTokenExpiry",
+    );
     if (!user)
       return res.status(404).send({ success: false, msg: "User not found" });
     res.status(200).send({ success: true, user });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({ success: false, msg: "Internal server occured!" });
   }
 });
@@ -152,19 +134,13 @@ router.post(
         { new: true },
       );
 
-      const mailOption = {
-        from: process.env.EMAIL_USER,
+      const mail = await resend.emails.send({
+        from: "Formeze <onboarding@resend.dev>",
         to: req.body.email,
         subject: "Password Recovery Email",
         html: generateHtml(token, "reset"),
-      };
-      transporter.sendMail(mailOption, (info,err) => {
-        console.log(info)
-        if (err){
-          console.log("Error sending email:", err);
-          return res.status(500).send(err);
-        } 
       });
+
       return res.status(200).send({
         success: true,
         msg: "An Email with reset link to your password has been send",
@@ -230,19 +206,13 @@ router.get("/createverificationtoken", fetchuser, async (req, res) => {
       { new: true },
     );
 
-    const mailOption = {
-      from: process.env.EMAIL_USER,
+    const data = await resend.emails.send({
+      from: "Formeze <onboarding@resend.dev>",
       to: user.email,
       subject: "Verify Your Email",
       html: generateHtml(token, "verify"),
-    };
-    transporter.sendMail(mailOption, (info,err) => {
-      console.log(info)
-      if (err){
-        console.log("Error sending email:", err);
-        return res.status(500).send(err);
-      }
     });
+
     res
       .status(200)
       .send({ success: true, msg: "Verification Link Sent Successfully" });

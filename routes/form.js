@@ -4,19 +4,11 @@ const router = express.Router();
 const fetchuser = require("../middleware/fetchUser");
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const nodemailer = require("nodemailer");
 const generateHtml = require("../generateHtml");
 const allowedOrigin = require("../middleware/allowedOrigin");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
- port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
 router.post("/f/:id", allowedOrigin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -36,23 +28,19 @@ router.post("/f/:id", allowedOrigin, async (req, res) => {
       createdAt: new Date(),
     });
 
-    const mailOption = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: "New Form Submission",
-      html: generateHtml("", "newMsg"),
-    };
-
     if (user.emailNotification) {
-      await transporter.sendMail(mailOption);
+      const data = await resend.emails.send({
+        from: "Formeze <onboarding@resend.dev>",
+        to: user.email,
+        subject: "New Form Submission",
+        html:generateHtml("", "newMsg"),
+      });
     }
-
 
     return res.json({
       success: true,
       msg: "Sent Successfully",
     });
-
   } catch (error) {
     console.log(error);
 

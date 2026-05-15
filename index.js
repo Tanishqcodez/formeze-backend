@@ -6,9 +6,10 @@ const app = express()
 const port = 5000
 const connectToMongo = require('./db')
 const Contact = require('./models/Contact')
-const nodemailer = require("nodemailer");
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv4first");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 connectToMongo()
 
@@ -22,15 +23,6 @@ const limiter = rateLimit({
   max: 5, 
 });
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
- port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
 
 app.use("/f", limiter);
 
@@ -45,63 +37,78 @@ app.get('/status', (req,res)=>{
    }
 })
 
-app.post('/contact', async (req,res)=>{
 
-   const {name, email, company, topic, message} = req.body
-  if(!name || !email || !topic || !message) return res.status(400).send({success:false, msg: "Please fill all required fields."})
 
-   try {
-      await Contact.create({
-         name, email, company, topic, message, created_at: new Date()
-      })
-      transporter.sendMail(
-      {
-        from: process.env.EMAIL_USER,
-        to: "programwithtanishq@gmail.com",
-        subject: "New Contact Form Submission",
-        html: `
-            <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Company:</strong> ${company || "N/A"}</p>
-            <p><strong>Topic:</strong> ${topic}</p>
-            <p><strong>Message:</strong><br>${message}</p>
-          `,
-      },
-      (err, info) => {
-        console.log(info)
-        if (err) {
-          console.log("Error sending email:", err);
-          return res.status(500).json({
-            success: false,
-            error: err.message,
-          });
-        }
-      },
-    );
-      res.status(200).send({success:true, msg:'Message received successfully.'})
-   }  
-   catch (error) {
-      res.status(501).send({success:false, msg: error})
-   }
-})
+app.post('/contact', async (req, res) => {
 
-app.get('/test' , async (req,res)=>{
-    await transporter.sendMail(
-      {
-        from: process.env.EMAIL_USER,
-        to: "programwithtanishq@gmail.com",
-        subject: "New Contact Form Submission",
-        html: 'TESTING MAIL',
-      },
-    ).then(info => {
-      console.log(info)
-    }).catch(err => {
-      console.log(err)
-    })
-    return res.status(200).send({success:true, msg:'Test email sent successfully.'})
-})
+  const { name, email, company, topic, message } = req.body;
 
+  if (!name || !email || !topic || !message) {
+    return res.status(400).send({
+      success: false,
+      msg: "Please fill all required fields."
+    });
+  }
+
+  try {
+    await Contact.create({
+      name,
+      email,
+      company,
+      topic,
+      message,
+      created_at: new Date()
+    });
+
+    const data = await resend.emails.send({
+      from: "Formeze <onboarding@resend.dev>",
+      to: "programwithtanishq@gmail.com",
+      subject: "New Contact Form Submission",
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Company:</strong> ${company || "N/A"}</p>
+        <p><strong>Topic:</strong> ${topic}</p>
+        <p><strong>Message:</strong><br>${message}</p>
+      `,
+    });
+
+
+    return res.status(200).send({
+      success: true,
+      msg: "Message received successfully."
+    });
+
+  } catch (error) {
+    console.log("Error:", error);
+
+    return res.status(500).send({
+      success: false,
+      msg: error.message
+    });
+  }
+});
+app.get('/test', async (req, res) => {
+  try {
+    const result = await resend.emails.send({
+      from: "Formeze <onboarding@resend.dev>",
+      to: "programwithtanishq@gmail.com",
+      subject: "TEST MAIL",
+      html: "<p>HELLO WORLD, TEST MAIL</p>",
+    });
+
+    return res.status(200).send({
+      success: true,
+      msg: "Test email sent successfully.",
+      result
+    });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ success: false });
+  }
+});
 app.listen(port, () => {
    console.log(`Formeze running on port ${port}`)
 })  
