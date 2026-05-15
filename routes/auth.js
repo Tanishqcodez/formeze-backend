@@ -9,7 +9,8 @@ const fetchuser = require("../middleware/fetchUser");
 const JWT_SECRET = process.env.JWT_SECRET;
 const randomString = require("randomstring");
 const generateHtml = require("../generateHtml");
-
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 router.post("/signup", async (req, res) => {
