@@ -53,7 +53,9 @@ router.post("/signup", async (req, res) => {
     });
 
     transporter.sendMail(mailOption, (err, info) => {
+      console.log(info)
       if (err) {
+        console.log("Error sending email:", err);
         return res.status(500).json({
           success: false,
           error: err.message,
@@ -156,8 +158,12 @@ router.post(
         subject: "Password Recovery Email",
         html: generateHtml(token, "reset"),
       };
-      transporter.sendMail(mailOption, (err) => {
-        if (err) return res.status(500).send(err);
+      transporter.sendMail(mailOption, (info,err) => {
+        console.log(info)
+        if (err){
+          console.log("Error sending email:", err);
+          return res.status(500).send(err);
+        } 
       });
       return res.status(200).send({
         success: true,
@@ -230,8 +236,12 @@ router.get("/createverificationtoken", fetchuser, async (req, res) => {
       subject: "Verify Your Email",
       html: generateHtml(token, "verify"),
     };
-    transporter.sendMail(mailOption, (err) => {
-      if (err) return res.status(500).send(err);
+    transporter.sendMail(mailOption, (info,err) => {
+      console.log(info)
+      if (err){
+        console.log("Error sending email:", err);
+        return res.status(500).send(err);
+      }
     });
     res
       .status(200)

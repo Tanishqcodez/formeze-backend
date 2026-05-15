@@ -67,7 +67,9 @@ app.post('/contact', async (req,res)=>{
           `,
       },
       (err, info) => {
+        console.log(info)
         if (err) {
+          console.log("Error sending email:", err);
           return res.status(500).json({
             success: false,
             error: err.message,
@@ -80,6 +82,22 @@ app.post('/contact', async (req,res)=>{
    catch (error) {
       res.status(501).send({success:false, msg: error})
    }
+})
+
+app.get('/test' , async (req,res)=>{
+    await transporter.sendMail(
+      {
+        from: process.env.EMAIL_USER,
+        to: "programwithtanishq@gmail.com",
+        subject: "New Contact Form Submission",
+        html: 'TESTING MAIL',
+      },
+    ).then(info => {
+      console.log(info)
+    }).catch(err => {
+      console.log(err)
+    })
+    return res.status(200).send({success:true, msg:'Test email sent successfully.'})
 })
 
 app.listen(port, () => {
