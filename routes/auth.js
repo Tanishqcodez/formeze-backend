@@ -67,6 +67,7 @@ router.post("/signup", async (req, res) => {
     return res.status(200).json({
       success: true,
       authToken,
+      verified: user.verified,
     });
   } catch (error) {
     res.status(500).send({ success: false, msg: "Internal Server Error" });
@@ -103,12 +104,26 @@ router.post(
       };
       const authToken = jwt.sign(data, JWT_SECRET);
       success = true;
-      res.send({ success, authToken });
+      res.send({ success, authToken, verified: user.verified });
     } catch (error) {
       res.status(500).send({ success: false, msg: "Internal server occured!" });
     }
   },
 );
+
+router.get("/fetch", fetchuser, async (req, res) => {
+  try {
+    let user = await User.findById(req.id).select(
+  "-password -resetPasswordToken -verificationToken -verificationTokenExpiry"
+);
+    if (!user)
+      return res.status(404).send({ success: false, msg: "User not found" });
+    res.status(200).send({ success: true, user });
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({ success: false, msg: "Internal server occured!" });
+  }
+});
 
 router.post(
   "/forgot",
