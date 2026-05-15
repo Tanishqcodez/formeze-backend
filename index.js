@@ -23,7 +23,6 @@ const limiter = rateLimit({
   max: 5, 
 });
 
-
 app.use("/f", limiter);
 
 app.use('/api/auth', require('./routes/auth'))
@@ -73,7 +72,6 @@ app.post('/contact', async (req, res) => {
         <p><strong>Message:</strong><br>${message}</p>
       `,
     });
-
 
     return res.status(200).send({
       success: true,
