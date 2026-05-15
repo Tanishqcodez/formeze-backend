@@ -32,7 +32,7 @@ const transporter = nodemailer.createTransport({
 
 app.use("/f", limiter);
 
-app.use('/api/auth', require('./routes/Auth'))
+app.use('/api/auth', require('./routes/auth'))
 app.use('/', require('./routes/form'))
 
 app.get('/status', (req,res)=>{
