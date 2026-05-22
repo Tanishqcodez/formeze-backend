@@ -10,8 +10,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const randomString = require("randomstring");
 const generateHtml = require("../generateHtml");
 
-const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY);
+const { BrevoClient } = require("@getbrevo/brevo");
+const brevo = new BrevoClient({ apiKey: process.env.BREVO_API });
 
 
 router.post("/signup", async (req, res) => {
@@ -39,11 +39,11 @@ router.post("/signup", async (req, res) => {
       created_at: Date.now(),
     });
 
-    const mail = await resend.emails.send({
-      from: "Formeze <onboarding@resend.dev>",
-      to: req.body.email,
+    await brevo.transactionalEmails.sendTransacEmail({
+      sender: { name: "Formeze", email: "formeze.service@gmail.com" },
+      to: [{ email: req.body.email }],
       subject: "Verify Your Formeze Account",
-      html: generateHtml(token, "verify"),
+      htmlContent: generateHtml(token, "verify"),
     });
 
     const data = {
@@ -136,11 +136,11 @@ router.post(
         { new: true },
       );
 
-      const mail = await resend.emails.send({
-        from: "Formeze <onboarding@resend.dev>",
-        to: req.body.email,
+      await brevo.transactionalEmails.sendTransacEmail({
+        sender: { name: "Formeze", email: "formeze.service@gmail.com" },
+        to: [{ email: req.body.email }],
         subject: "Password Recovery Email",
-        html: generateHtml(token, "reset"),
+        htmlContent: generateHtml(token, "reset"),
       });
 
       return res.status(200).send({
@@ -208,11 +208,11 @@ router.get("/createverificationtoken", fetchuser, async (req, res) => {
       { new: true },
     );
 
-    const data = await resend.emails.send({
-      from: "Formeze <onboarding@resend.dev>",
-      to: user.email,
+    await brevo.transactionalEmails.sendTransacEmail({
+      sender: { name: "Formeze", email: "formeze.service@gmail.com" },
+      to: [{ email: user.email }],
       subject: "Verify Your Email",
-      html: generateHtml(token, "verify"),
+      htmlContent: generateHtml(token, "verify"),
     });
 
     res

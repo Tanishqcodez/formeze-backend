@@ -6,8 +6,9 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const generateHtml = require("../generateHtml");
 const allowedOrigin = require("../middleware/allowedOrigin");
-const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY);
+
+const { BrevoClient } = require("@getbrevo/brevo");
+const brevo = new BrevoClient({ apiKey: process.env.BREVO_API });
 
 router.post("/f/:id", allowedOrigin, async (req, res) => {
   try {
@@ -29,11 +30,11 @@ router.post("/f/:id", allowedOrigin, async (req, res) => {
     });
 
     if (user.emailNotification) {
-      const data = await resend.emails.send({
-        from: "Formeze <onboarding@resend.dev>",
-        to: user.email,
+      await brevo.transactionalEmails.sendTransacEmail({
+        sender: { name: "Formeze", email: "formeze.service@gmail.com" },
+        to: [{ email: user.email }],
         subject: "New Form Submission",
-        html:generateHtml("", "newMsg"),
+        htmlContent: generateHtml("", "newMsg"),
       });
     }
 
