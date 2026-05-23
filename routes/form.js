@@ -29,19 +29,18 @@ router.post("/f/:id", allowedOrigin, async (req, res) => {
       createdAt: new Date(),
     });
 
-    if (user.emailNotification) {
-      await brevo.transactionalEmails.sendTransacEmail({
-        sender: { name: "Formeze", email: "formeze.service@gmail.com" },
-        to: [{ email: user.email }],
-        subject: "New Form Submission",
-        htmlContent: generateHtml("", "newMsg"),
-      });
-    }
-
-    return res.json({
+     res.json({
       success: true,
       msg: "Sent Successfully",
     });
+
+     if (user.emailNotification) {
+      sendEmail(
+        "New Form Submission",
+        generateHtml("", "newMsg"),
+        user.email,
+      );
+    }
   } catch (error) {
     console.log(error);
 

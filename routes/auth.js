@@ -11,8 +11,8 @@ const randomString = require("randomstring");
 const generateHtml = require("../generateHtml");
 
 const { BrevoClient } = require("@getbrevo/brevo");
+const sendEmail = require("../worker/sendEmail");
 const brevo = new BrevoClient({ apiKey: process.env.BREVO_API });
-
 
 router.post("/signup", async (req, res) => {
   try {
@@ -20,7 +20,7 @@ router.post("/signup", async (req, res) => {
     if (user) {
       return res.status(400).json({
         success: false,
-        error: "Sorry! A user already exits with this email!",
+        error: "Sorry! A user already exists with this email!",
       });
     }
     const salt = await bcrypt.genSalt(10);
@@ -39,21 +39,21 @@ router.post("/signup", async (req, res) => {
       created_at: Date.now(),
     });
 
-    await brevo.transactionalEmails.sendTransacEmail({
-      sender: { name: "Formeze", email: "formeze.service@gmail.com" },
-      to: [{ email: req.body.email }],
-      subject: "Verify Your Formeze Account",
-      htmlContent: generateHtml(token, "verify"),
-    });
-
     const data = {
       id: user.id,
     };
     const authToken = jwt.sign(data, JWT_SECRET);
-    return res.status(200).json({
+    res.status(201).json({
       success: true,
       authToken,
       verified: user.verified,
+    });
+    sendEmail(
+      "Verify Your Formeze Account",
+      generateHtml(token, "verify"),
+      req.body.email,
+    ).catch((err) => {
+      console.log(err);
     });
   } catch (error) {
     res.status(500).send({ success: false, msg: "Internal Server Error" });
@@ -136,17 +136,15 @@ router.post(
         { new: true },
       );
 
-      await brevo.transactionalEmails.sendTransacEmail({
-        sender: { name: "Formeze", email: "formeze.service@gmail.com" },
-        to: [{ email: req.body.email }],
-        subject: "Password Recovery Email",
-        htmlContent: generateHtml(token, "reset"),
-      });
-
-      return res.status(200).send({
+      res.status(200).send({
         success: true,
         msg: "An Email with reset link to your password has been send",
       });
+      sendEmail(
+        "Password Recovery Email",
+        generateHtml(token, "reset"),
+        req.body.email,
+      );
     } catch (error) {
       res.status(500).send({ success: false, msg: "Internal server occured!" });
     }
@@ -182,11 +180,17 @@ router.post(
       res
         .status(200)
         .send({ success: true, msg: "password updated successfully" });
+      sendEmail(
+        "Password Reset Successfully",
+        generateHtml('', "resetSuccessful" , user.name),
+        user.email,
+      );
     } catch (error) {
       res.status(500).send({ success: false, msg: "Internal server occured!" });
     }
   },
 );
+
 
 router.get("/createverificationtoken", fetchuser, async (req, res) => {
   try {
@@ -208,16 +212,10 @@ router.get("/createverificationtoken", fetchuser, async (req, res) => {
       { new: true },
     );
 
-    await brevo.transactionalEmails.sendTransacEmail({
-      sender: { name: "Formeze", email: "formeze.service@gmail.com" },
-      to: [{ email: user.email }],
-      subject: "Verify Your Email",
-      htmlContent: generateHtml(token, "verify"),
-    });
-
     res
       .status(200)
       .send({ success: true, msg: "Verification Link Sent Successfully" });
+    sendEmail("Verify Your Email", generateHtml(token, "verify"), user.email);
   } catch (error) {
     res.status(500).send({ success: false, msg: "Internal server occured!" });
   }

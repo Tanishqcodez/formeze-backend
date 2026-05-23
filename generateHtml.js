@@ -1,4 +1,4 @@
-const generateHtml = (token, reqType) => {
+const generateHtml = (token, reqType,name) => {
   const baseStyles = `
       <style type="text/css">
         @media only screen and (min-width: 520px) {
@@ -277,7 +277,7 @@ const generateHtml = (token, reqType) => {
                     <div style="position:relative;z-index:1;">
                       <p style="font-family:'Sora',Arial,sans-serif;font-size:11.5px;color:#8ab89a;margin:0 0 4px;line-height:1.7;">
                         &copy; 2026 Formeze &nbsp;&middot;&nbsp;
-                        <a href="mailto:support@formeze.com" style="color:#2e8b4a;text-decoration:none;">support@formeze.com</a>
+                        <a href="mailto:formeze.service@gmail.com" style="color:#2e8b4a;text-decoration:none;">formeze.service@gmail.com</a>
                       </p>
                     </div>
                   </td>
@@ -312,7 +312,7 @@ const generateHtml = (token, reqType) => {
       ctaUrl: `https://formeze.netlify.app/verify/${token}/`,
       ctaLabel: "Verify my email address",
       noticeText: `This link expires in <strong>24 hours</strong>. If you didn't create a Formeze account, you can safely ignore this email — no action is required.`,
-      closingText: `Once verified, you'll have full access to all features. If you need any help, reach out to us anytime at <a href="mailto:support@formeze.com" style="color:#2e8b4a;text-decoration:none;">support@formeze.com</a>.`,
+      closingText: `Once verified, you'll have full access to all features. If you need any help, reach out to us anytime at <a href="mailto:formeze.service@gmail.com" style="color:#2e8b4a;text-decoration:none;">formeze.service@gmail.com</a>.`,
     });
   }
   if (reqType === "newMsg") {
@@ -497,6 +497,223 @@ const generateHtml = (token, reqType) => {
 `
   }
 
+  if(reqType ==="resetSuccessful"){
+    return `
+    <!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
+  <title>Password Reset Successful – Formeze</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    * { box-sizing: border-box; }
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+
+    @media only screen and (max-width: 599px) {
+      .email-wrapper  { padding: 20px 12px !important; }
+      .card-header    { padding: 28px 24px 24px !important; }
+      .card-body      { padding: 24px 24px 28px !important; }
+      .card-alert     { padding: 0 24px 28px !important; }
+      .card-footer    { padding: 20px 24px 24px !important; }
+      .headline       { font-size: 25px !important; line-height: 1.22 !important; }
+      .divider-wrap   { padding: 0 24px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#081008;">
+
+  <!-- Preview text -->
+  <div style="display:none;font-size:1px;color:#081008;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+    Your Formeze password has been reset successfully — sign in with your new credentials.&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+  </div>
+
+  <!-- Wrapper -->
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="email-wrapper"
+    style="background-color:#081008;background-image:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(41,201,100,0.13) 0%,transparent 65%);padding:48px 16px;font-family:'Inter',Arial,sans-serif;">
+    <tr>
+      <td align="center">
+
+        <!-- Card -->
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560"
+          style="max-width:560px;width:100%;background-color:#0d1a0e;border-radius:18px;overflow:hidden;border:1px solid rgba(41,201,100,0.18);box-shadow:0 0 0 1px rgba(41,201,100,0.08),0 32px 64px rgba(0,0,0,0.55);">
+
+          <!-- ── HEADER ── -->
+          <tr>
+            <td class="card-header" style="padding:36px 44px 32px;background:linear-gradient(160deg,#0f2012 0%,#0d1a0e 100%);border-bottom:1px solid rgba(41,201,100,0.10);">
+
+              <!-- Logo -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+                <tr>
+                  <!-- Green rounded square -->
+                  <td style="width:38px;height:38px;background:#29C964;border-radius:9px;text-align:center;vertical-align:middle;">
+                    <!-- Formeze icon: document with form lines + checkbox, white on green -->
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:auto;">
+                      <!-- Document body -->
+                      <rect x="3.5" y="1.5" width="13" height="16" rx="2" stroke="white" stroke-width="1.4" fill="none"/>
+                      <!-- Folded corner dog-ear -->
+                      <path d="M12.5 1.5 L16.5 5.5 L12.5 5.5 Z" fill="white" opacity="0.9"/>
+                      <!-- Checkbox (top-left of form) -->
+                      <rect x="5.5" y="8" width="3" height="3" rx="0.6" stroke="white" stroke-width="1.2" fill="none"/>
+                      <!-- Checkmark inside checkbox -->
+                      <path d="M6.2 9.4 L7 10.2 L8.5 8.6" stroke="white" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                      <!-- Form lines -->
+                      <line x1="10.5" y1="9" x2="14.5" y2="9" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                      <line x1="10.5" y1="11" x2="14.5" y2="11" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                      <!-- Bottom lines -->
+                      <line x1="5.5" y1="13.5" x2="14.5" y2="13.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                      <line x1="5.5" y1="15.5" x2="11"   y2="15.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                  </td>
+                  <td style="padding-left:11px;vertical-align:middle;">
+                    <span style="font-family:'Inter',Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.4px;">Formeze</span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Badge -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr>
+                  <td style="background:rgba(41,201,100,0.12);border:1px solid rgba(41,201,100,0.30);border-radius:100px;padding:5px 14px 5px 9px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="width:7px;height:7px;background:#29C964;border-radius:50%;"></td>
+                        <td style="padding-left:7px;">
+                          <span style="font-family:'Inter',Arial,sans-serif;font-size:11px;font-weight:600;color:#29C964;letter-spacing:0.9px;text-transform:uppercase;">Password Reset Successful</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Headline -->
+              <h1 class="headline" style="font-family:'Inter',Arial,sans-serif;font-size:30px;font-weight:800;color:#ffffff;line-height:1.22;margin:0 0 12px 0;letter-spacing:-0.6px;">
+                Your password has been<br>
+                <span style="color:#29C964;">successfully reset.</span>
+              </h1>
+
+              <!-- Sub -->
+              <p style="font-family:'Inter',Arial,sans-serif;font-size:14px;font-weight:400;color:#8aab8e;margin:0;line-height:1.6;">
+                You can now sign in using your new credentials.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── BODY ── -->
+          <tr>
+            <td class="card-body" style="padding:32px 44px 36px;">
+
+              <!-- Check circle icon -->
+
+              <!-- Greeting -->
+              <p style="font-family:'Inter',Arial,sans-serif;font-size:15px;font-weight:400;color:#c4d9c6;margin:0 0 14px 0;line-height:1.6;">
+                Hey <strong style="color:#ffffff;font-weight:600;">${name}</strong>,
+              </p>
+
+              <!-- Body copy -->
+              <p style="font-family:'Inter',Arial,sans-serif;font-size:14.5px;font-weight:400;color:#8aab8e;margin:0 0 32px 0;line-height:1.8;">
+                We're confirming that your <strong style="color:#c4d9c6;font-weight:500;">Formeze</strong> account password was successfully updated. If this was you, no further action is needed — you're all set and ready to go.
+              </p>
+
+              <!-- CTA Button -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+                      href="https://formeze.netlify.app/login"
+                      style="height:50px;v-text-anchor:middle;width:220px;" arcsize="18%"
+                      strokecolor="#29C964" fillcolor="#29C964">
+                      <w:anchorlock/>
+                      <center style="color:#081008;font-family:'Inter',Arial,sans-serif;font-size:14px;font-weight:700;">Sign in to Formeze</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-->
+                    <a href="https://formeze.netlify.app/login" target="_blank"
+                      style="display:inline-block;background:#29C964;color:#081008;font-family:'Inter',Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1px;text-decoration:none;padding:15px 44px;border-radius:9px;box-shadow:0 0 0 1px rgba(41,201,100,0.4),0 8px 28px rgba(41,201,100,0.22);">
+                      Sign in to Formeze &rarr;
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- ── DIVIDER ── -->
+          <tr>
+            <td class="divider-wrap" style="padding:0 44px;">
+              <div style="height:1px;background:rgba(41,201,100,0.10);"></div>
+            </td>
+          </tr>
+
+          <!-- ── ALERT BOX ── -->
+          <tr>
+            <td class="card-alert" style="padding:24px 44px 32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+                style="background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.20);border-left:3px solid #f5a623;border-radius:9px;">
+                <tr>
+                  <td style="padding:15px 18px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr>
+                        <td style="vertical-align:top;padding-right:12px;font-size:16px;width:24px;line-height:1.5;">&#9888;</td>
+                        <td style="vertical-align:top;">
+                          <p style="font-family:'Inter',Arial,sans-serif;font-size:13px;font-weight:400;color:#b89a6a;line-height:1.7;margin:0;">
+                            <strong style="color:#f5c842;font-weight:600;">Didn't request this?</strong><br>
+                            If you didn't initiate this change, your account may be at risk. Please
+                            <a href="https://formeze.netlify.app/support" style="color:#f5c842;text-decoration:underline;font-weight:500;">contact our support team</a>
+                            immediately so we can secure your account.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="card-footer" style="background:#091209;padding:22px 44px 26px;border-top:1px solid rgba(41,201,100,0.08);">
+              <p style="text-align:center;margin:0 0 12px 0;">
+                <a href="#" style="font-family:'Inter',Arial,sans-serif;font-size:12px;color:#3d6642;text-decoration:none;margin:0 8px;">Privacy Policy</a>
+                <span style="color:#1e3320;">&middot;</span>
+                <a href="#" style="font-family:'Inter',Arial,sans-serif;font-size:12px;color:#3d6642;text-decoration:none;margin:0 8px;">Terms of Service</a>
+                <span style="color:#1e3320;">&middot;</span>
+                <a href="#" style="font-family:'Inter',Arial,sans-serif;font-size:12px;color:#3d6642;text-decoration:none;margin:0 8px;">Help Center</a>
+              </p>
+              <p style="font-family:'Inter',Arial,sans-serif;font-size:12px;color:#2e522f;text-align:center;margin:0;line-height:1.7;">
+                &copy; 2026 Formeze, Inc. &middot; 100 Form St, San Francisco, CA 94105<br>
+                <a href="#" style="color:#3d6642;text-decoration:underline;">Unsubscribe</a> from security notifications.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- END CARD -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+
+    `
+  }
+
   return emailWrapper({
     headerIcon: `<span style="font-family:Arial,sans-serif;font-size:22px;color:#ffffff;line-height:1;">&#128274;</span>`,
     headerTitle: "Reset your password",
@@ -506,7 +723,7 @@ const generateHtml = (token, reqType) => {
     ctaUrl: `https://formeze.netlify.app/reset/${token}/`,
     ctaLabel: "Reset my password",
     noticeText: `This reset link is valid for a <strong>limited time only</strong>. If you didn't request a password reset, you can safely ignore this email — your password will remain unchanged.`,
-    closingText: `If you continue to experience issues or have questions, our support team is always here to help at <a href="mailto:support@formeze.com" style="color:#2e8b4a;text-decoration:none;">support@formeze.com</a>. Thank you for using Formeze.`,
+    closingText: `If you continue to experience issues or have questions, our support team is always here to help at <a href="mailto:formeze.service@gmail.com" style="color:#2e8b4a;text-decoration:none;">formeze.service@gmail.com</a>. Thank you for using Formeze.`,
   });
 };
 

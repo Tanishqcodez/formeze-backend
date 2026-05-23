@@ -1,14 +1,12 @@
 require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const dns = require("dns");
-
 const { BrevoClient } = require("@getbrevo/brevo");
-
 const connectToMongo = require("./db");
 const Contact = require("./models/Contact");
+const sendEmail  = require("./worker/sendEmail");
 
 dns.setDefaultResultOrder("ipv4first");
 
@@ -16,18 +14,6 @@ const app = express();
 const port = 5000;
 
 connectToMongo();
-
-/* =========================
-   BREVO SETUP
-========================= */
-
-const brevo = new BrevoClient({
-  apiKey: process.env.BREVO_API,
-});
-
-/* =========================
-   MIDDLEWARE
-========================= */
 
 app.use(express.json());
 
@@ -42,19 +28,10 @@ const limiter = rateLimit({
   max: 5,
 });
 
+//Routes
 app.use("/f", limiter);
-
-/* =========================
-   ROUTES
-========================= */
-
 app.use("/api/auth", require("./routes/auth"));
-
 app.use("/", require("./routes/form"));
-
-/* =========================
-   STATUS ROUTE
-========================= */
 
 app.get("/status", (req, res) => {
   try {
@@ -70,11 +47,9 @@ app.get("/status", (req, res) => {
   }
 });
 
-/* =========================
-   CONTACT ROUTE
-========================= */
 
-app.post("/contact", async (req, res) => {
+
+app.post("/contact",limiter, async (req, res) => {
   const {
     name,
     email,
@@ -91,7 +66,7 @@ app.post("/contact", async (req, res) => {
   }
 
   try {
-    // SAVE TO DATABASE
+
     await Contact.create({
       name,
       email,
@@ -100,36 +75,21 @@ app.post("/contact", async (req, res) => {
       message,
       created_at: new Date(),
     });
-
-    // SEND EMAIL
-    const data = await brevo.transactionalEmails.sendTransacEmail({
-      subject: `New Contact Form Submission - ${topic}`,
-      htmlContent: `
-        <h2>New Contact Form Submission</h2>
+    return res.status(200).send({
+      success: true,
+      msg: "Message received successfully.",
+    });
+      sendEmail(
+        `New Contact Form Submission: ${topic}`,
+        `<h2>New Contact Form Submission</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Company:</strong> ${company || "N/A"}</p>
         <p><strong>Topic:</strong> ${topic}</p>
         <p><strong>Message:</strong></p>
-        <p>${message}</p>
-      `,
-      sender: {
-        name: "Formeze",
-        email: "formeze.service@gmail.com",
-      },
-      to: [
-        {
-          email: "programwithtanishq@gmail.com",
-        },
-      ],
-    });
-
-    console.log(data);
-
-    return res.status(200).send({
-      success: true,
-      msg: "Message received successfully.",
-    });
+        <p>${message}</p>`,
+        "programwithtanishq@gmail.com"
+      );
 
   } catch (error) {
     console.log("Error:", error);
@@ -141,34 +101,18 @@ app.post("/contact", async (req, res) => {
   }
 });
 
-/* =========================
-   TEST EMAIL ROUTE
-========================= */
 
-app.get("/test", async (req, res) => {
+app.get("/test",limiter, async (req, res) => {
   try {
-    const result = await brevo.transactionalEmails.sendTransacEmail({
-      subject: "TEST MAIL",
-      htmlContent: `
-        <h1>HELLO WORLD</h1>
-        <p>Brevo email working successfully.</p>
-      `,
-      sender: {
-        name: "Formeze",
-        email: "formeze.service@gmail.com",
-      },
-      to: [
-        {
-          email: "tanishq001verma08@gmail.com",
-          name: "Tanishq Verma",
-        },
-      ],
-    });
+   sendEmail(
+      "Test Email from Formeze",
+      "<h1>This is a test email sent from Formeze backend.</h1><p>If you received this email, it means the email sending functionality is working correctly.</p>",
+      "programwithtanishq@gmail.com"
+    );
 
     return res.status(200).send({
       success: true,
-      msg: "Test email sent successfully.",
-      result,
+      msg: "Test email sent successfully."
     });
 
   } catch (err) {
@@ -180,10 +124,6 @@ app.get("/test", async (req, res) => {
     });
   }
 });
-
-/* =========================
-   START SERVER
-========================= */
 
 app.listen(port, () => {
   console.log(
