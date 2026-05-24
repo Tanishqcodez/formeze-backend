@@ -6,8 +6,8 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const generateHtml = require("../generateHtml");
 const allowedOrigin = require("../middleware/allowedOrigin");
-
 const sendEmail = require("../worker/sendEmail")
+
 
 router.post("/f/:id", allowedOrigin, async (req, res) => {
   try {
