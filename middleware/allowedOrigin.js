@@ -21,7 +21,7 @@ const allowedOrigin = async (req, res, next) => {
     });
 
   try {
-    console.log(req.headers.origin);
+    // console.log(req.headers.origin);
     if (!user.allowedOrigin || user.allowedOrigin.trim() === "") {
       return next();
     }

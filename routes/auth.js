@@ -9,10 +9,8 @@ const fetchuser = require("../middleware/fetchUser");
 const JWT_SECRET = process.env.JWT_SECRET;
 const randomString = require("randomstring");
 const generateHtml = require("../generateHtml");
+const sendEmail = require("../worker/sendEmail")
 
-const { BrevoClient } = require("@getbrevo/brevo");
-const sendEmail = require("../worker/sendEmail");
-const brevo = new BrevoClient({ apiKey: process.env.BREVO_API });
 
 router.post("/signup", async (req, res) => {
   try {

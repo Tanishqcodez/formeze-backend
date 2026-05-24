@@ -7,8 +7,7 @@ const User = require("../models/User");
 const generateHtml = require("../generateHtml");
 const allowedOrigin = require("../middleware/allowedOrigin");
 
-const { BrevoClient } = require("@getbrevo/brevo");
-const brevo = new BrevoClient({ apiKey: process.env.BREVO_API });
+const sendEmail = require("../worker/sendEmail")
 
 router.post("/f/:id", allowedOrigin, async (req, res) => {
   try {
@@ -29,7 +28,7 @@ router.post("/f/:id", allowedOrigin, async (req, res) => {
       createdAt: new Date(),
     });
 
-     res.send("https://formeze.netlify.app/submissionpage")
+     res.redirect("https://formeze.netlify.app/submissionpage")
 
      if (user.emailNotification) {
       sendEmail(
