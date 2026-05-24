@@ -29,10 +29,7 @@ router.post("/f/:id", allowedOrigin, async (req, res) => {
       createdAt: new Date(),
     });
 
-     res.json({
-      success: true,
-      msg: "Sent Successfully",
-    });
+     res.send("https://formeze.netlify.app/submissionpage")
 
      if (user.emailNotification) {
       sendEmail(
