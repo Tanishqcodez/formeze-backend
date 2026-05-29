@@ -115,30 +115,34 @@ router.post(
   async (req, res) => {
     try {
       let user = await User.findOne({ email: req.body.email });
-      // If !user then send normal response 
+
+      if (!user)
+        return res
+          .status(404)
+          .send({ success: false, msg: "404 - Email Not Found" });
       if (user.resetPasswordToken !== "")
         return res.status(500).send({
           success: false,
-          msg: "If there is an account associated with this email, we have sent a password reset link."
+          msg: "already sent a reset link to your gmail",
         });
-      if(user){		
-     	 let token = randomString.generate();
-     	 await User.findOneAndUpdate(
+
+      let token = randomString.generate();
+
+      await User.findOneAndUpdate(
         { email: req.body.email },
         { resetPasswordToken: token },
         { new: true },
-      )};
+      );
 
       res.status(200).send({
         success: true,
         msg: "An Email with reset link to your password has been send",
       });
-	if(user){    
       sendEmail(
         "Password Recovery Email",
         generateHtml(token, "reset"),
         req.body.email,
-      )};
+      );
     } catch (error) {
       res.status(500).send({ success: false, msg: "Internal server occured!" });
     }
