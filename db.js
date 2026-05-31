@@ -1,4 +1,7 @@
+let {setServers} = require("node:dns/promises")
+setServers(["1.1.1.1", "8.8.8.8"])
 require("dotenv").config();
+require("dns").setDefaultResultOrder("ipv4first");
 const mongoose = require("mongoose");
 
 const mongoUri = process.env.MONGO_URI;

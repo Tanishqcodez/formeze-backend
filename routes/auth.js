@@ -10,7 +10,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const randomString = require("randomstring");
 const generateHtml = require("../generateHtml");
 const sendEmail = require("../worker/sendEmail")
+const rateLimit = require("express-rate-limit");
 
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+});
 
 router.post("/signup", async (req, res) => {
   try {
@@ -110,14 +115,14 @@ router.get("/fetch", fetchuser, async (req, res) => {
 });
 
 router.post(
-  "/forgot",
+  "/forgot", limiter,
   [body("email", "Enter a valid email").isEmail()],
   async (req, res) => {
     try {
       let user = await User.findOne({ email: req.body.email });
       // If !user then send normal response 
       if (user.resetPasswordToken !== "")
-        return res.status(500).send({
+        return res.status(200).send({
           success: false,
           msg: "If there is an account associated with this email, we have sent a password reset link."
         });

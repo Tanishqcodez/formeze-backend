@@ -1,3 +1,7 @@
 node_modules
 .env
 form.html
+*.swp
+*.swo
+*~
+*.un~
