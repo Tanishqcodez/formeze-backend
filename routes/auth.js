@@ -9,7 +9,7 @@ const fetchuser = require("../middleware/fetchUser");
 const JWT_SECRET = process.env.JWT_SECRET;
 const randomString = require("randomstring");
 const generateHtml = require("../generateHtml");
-const sendEmail = require("../worker/sendEmail")
+const sendEmail = require("../worker/sendEmail");
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
@@ -115,35 +115,38 @@ router.get("/fetch", fetchuser, async (req, res) => {
 });
 
 router.post(
-  "/forgot", limiter,
+  "/forgot",
+  limiter,
   [body("email", "Enter a valid email").isEmail()],
   async (req, res) => {
     try {
       let user = await User.findOne({ email: req.body.email });
-      // If !user then send normal response 
+      // If !user then send normal response
       if (user.resetPasswordToken !== "")
         return res.status(200).send({
-          success: false,
-          msg: "If there is an account associated with this email, we have sent a password reset link."
+          success: true,
+          msg: "If there is an account associated with this email, we have sent a password reset link to your email address.",
         });
-      if(user){		
-     	 let token = randomString.generate();
-     	 await User.findOneAndUpdate(
-        { email: req.body.email },
-        { resetPasswordToken: token },
-        { new: true },
-      )};
+      if (user) {
+        let token = randomString.generate();
+        await User.findOneAndUpdate(
+          { email: req.body.email },
+          { resetPasswordToken: token },
+          { new: true },
+        );
+      }
 
       res.status(200).send({
         success: true,
-        msg: "An Email with reset link to your password has been send",
+        msg: "If there is an account associated with this email, we have sent a password reset link to your email address.",
       });
-	if(user){    
-      sendEmail(
-        "Password Recovery Email",
-        generateHtml(token, "reset"),
-        req.body.email,
-      )};
+      if (user) {
+        sendEmail(
+          "Password Recovery Email",
+          generateHtml(token, "reset"),
+          req.body.email,
+        );
+      }
     } catch (error) {
       res.status(500).send({ success: false, msg: "Internal server occured!" });
     }
@@ -181,7 +184,7 @@ router.post(
         .send({ success: true, msg: "password updated successfully" });
       sendEmail(
         "Password Reset Successfully",
-        generateHtml('', "resetSuccessful" , user.name),
+        generateHtml("", "resetSuccessful", user.name),
         user.email,
       );
     } catch (error) {
@@ -189,7 +192,6 @@ router.post(
     }
   },
 );
-
 
 router.get("/createverificationtoken", fetchuser, async (req, res) => {
   try {
