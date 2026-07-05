@@ -60,7 +60,6 @@ router.post("/signup", async (req, res) => {
     });
   } catch (error) {
     res.status(500).send({ success: false, msg: "Internal Server Error" });
-    console.log(error);
   }
 });
 
@@ -109,7 +108,6 @@ router.get("/fetch", fetchuser, async (req, res) => {
       return res.status(404).send({ success: false, msg: "User not found" });
     res.status(200).send({ success: true, user });
   } catch (error) {
-    console.log(error);
     res.status(500).send({ success: false, msg: "Internal server occured!" });
   }
 });
@@ -119,27 +117,24 @@ router.post(
   limiter,
   [body("email", "Enter a valid email").isEmail()],
   async (req, res) => {
+    let token;
     try {
       let user = await User.findOne({ email: req.body.email });
-      // If !user then send normal response
-      if (user.resetPasswordToken !== "")
+      // If there is no user then send normal response
+      if (!user) {
         return res.status(200).send({
           success: true,
           msg: "If there is an account associated with this email, we have sent a password reset link to your email address.",
         });
+      }
       if (user) {
-        let token = randomString.generate();
+         token = randomString.generate();
         await User.findOneAndUpdate(
           { email: req.body.email },
           { resetPasswordToken: token },
-          { new: true },
+          { returnDocument: "after" },
         );
       }
-
-      res.status(200).send({
-        success: true,
-        msg: "If there is an account associated with this email, we have sent a password reset link to your email address.",
-      });
       if (user) {
         sendEmail(
           "Password Recovery Email",
@@ -147,6 +142,10 @@ router.post(
           req.body.email,
         );
       }
+      res.status(200).send({
+        success: true,
+        msg: "fdiwiIf there is an account associated with this email, we have sent a password reset link to your email address.",
+      });
     } catch (error) {
       res.status(500).send({ success: false, msg: "Internal server occured!" });
     }

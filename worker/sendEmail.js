@@ -4,6 +4,7 @@ const brevo = new BrevoClient({
 });
 
 let sendEmail = async (subject, html, to) => {
+  console.log("here we are")
   const data = await brevo.transactionalEmails.sendTransacEmail({
     subject: subject,
     htmlContent: html,
@@ -17,6 +18,7 @@ let sendEmail = async (subject, html, to) => {
       },
     ],
   });
+  console.log("Email sent successfully:", data);
 };
 
 module.exports = sendEmail
